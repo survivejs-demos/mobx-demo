@@ -9,7 +9,7 @@ class App extends React.Component {
 
     this.addNote = props.store.addNote.bind(props.store, {task: 'New task'});
     this.editNote = this.editNote.bind(this);
-    this.deleteNote = this.deleteNote.bind(this);
+    this.deleteNote = props.store.deleteNote.bind(props.store);
   }
   render() {
     const notes = this.props.store.notes;
@@ -24,10 +24,6 @@ class App extends React.Component {
           onEdit={this.editNote} onDelete={this.deleteNote} />
       </div>
     );
-  }
-  // XXX
-  deleteNote(id) {
-    this.props.store.deleteNote(this.props.todo);
   }
   editNote(id, task) {
     // TODO
