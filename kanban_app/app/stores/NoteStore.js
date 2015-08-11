@@ -30,7 +30,6 @@ noteStore.editNote = function(id, task) {
     return;
   }
 
-  // XXX: why doesn't this get committed?
   this.notes[noteIndex].task = task;
 };
 

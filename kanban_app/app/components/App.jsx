@@ -1,9 +1,7 @@
 import uuid from 'node-uuid';
 import React from 'react';
-import {reactiveComponent} from 'mobservable';
 import Notes from './Notes.jsx';
 
-@reactiveComponent
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -16,9 +14,6 @@ export default class App extends React.Component {
   }
   render() {
     const notes = this.props.store.notes;
-
-    // XXX: fails to update without... missing something?
-    console.log('notes', notes);
 
     return (
       <div>

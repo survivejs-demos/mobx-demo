@@ -1,6 +1,8 @@
 import React from 'react';
+import {reactiveComponent} from 'mobservable';
 import Note from './Note.jsx';
 
+@reactiveComponent
 export default class Notes extends React.Component {
   constructor(props) {
     super(props);
