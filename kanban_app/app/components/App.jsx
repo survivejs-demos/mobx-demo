@@ -3,7 +3,8 @@ import React from 'react';
 import {reactiveComponent} from 'mobservable';
 import Notes from './Notes.jsx';
 
-class App extends React.Component {
+@reactiveComponent
+export default class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -27,6 +28,4 @@ class App extends React.Component {
       </div>
     );
   }
-}
-
-export default reactiveComponent(App);
+};
