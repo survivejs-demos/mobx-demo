@@ -7,14 +7,16 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.addNote = props.store.addNote.bind(props.store, {task: 'New task'});
-    this.editNote = this.editNote.bind(this);
-    this.deleteNote = props.store.deleteNote.bind(props.store);
+    const store = props.store;
+
+    this.addNote = store.addNote.bind(store, {task: 'New task'});
+    this.editNote = store.editNote.bind(store);
+    this.deleteNote = store.deleteNote.bind(store);
   }
   render() {
     const notes = this.props.store.notes;
 
-    // XXX: why is this needed?
+    // XXX: fails to update without... missing something?
     console.log('notes', notes);
 
     return (
@@ -24,9 +26,6 @@ class App extends React.Component {
           onEdit={this.editNote} onDelete={this.deleteNote} />
       </div>
     );
-  }
-  editNote(id, task) {
-    // TODO
   }
 }
 

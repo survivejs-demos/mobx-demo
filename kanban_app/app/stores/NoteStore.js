@@ -22,6 +22,18 @@ noteStore.addNote = function({task}) {
   this.notes.push({id: uuid.v4(), task});
 };
 
+noteStore.editNote = function(id, task) {
+  const notes = this.notes;
+  const noteIndex = this.findNote(id);
+
+  if(noteIndex < 0) {
+    return;
+  }
+
+  // XXX: why doesn't this get committed?
+  this.notes[noteIndex].task = task;
+};
+
 noteStore.deleteNote = function(id) {
   const notes = this.notes;
   const noteIndex = this.findNote(id);
@@ -43,19 +55,5 @@ noteStore.findNote = function(id) {
 
   return noteIndex;
 };
-
-/*
-// edit
-let notes = this.state.notes;
-const noteIndex = this.findNote(id);
-
-if(noteIndex < 0) {
-  return;
-}
-
-notes[noteIndex].task = task;
-
-this.setState({notes});
-*/
 
 export default noteStore;
