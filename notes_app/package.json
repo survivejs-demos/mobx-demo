@@ -1,7 +1,7 @@
 {
-  "name": "kanban_app",
+  "name": "notes_app",
   "version": "0.0.0",
-  "description": "Webpack demo app",
+  "description": "Mobservable Notes demo",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
