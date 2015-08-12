@@ -82,12 +82,6 @@ class LaneStore {
   move({sourceData, targetData}) {
     const lanes = this.lanes;
 
-    if(!lanes) {
-      debugger;
-      // XXXXX: why this can happen?
-      return;
-    }
-
     const sourceLane = lanes.filter((lane) => {
       return lane.notes.indexOf(sourceData) >= 0;
     })[0];
@@ -97,18 +91,11 @@ class LaneStore {
     const sourceNoteIndex = sourceLane.notes.indexOf(sourceData);
     const targetNoteIndex = targetLane.notes.indexOf(targetData);
 
-    if(sourceLane === targetLane) {
-      // move at once to avoid complications
-      sourceLane.notes.splice(sourceNoteIndex, 1);
-      sourceLane.notes.splice(targetNoteIndex, 0, sourceData);
-    }
-    else {
-      // get rid of the source
-      sourceLane.notes.splice(sourceNoteIndex, 1);
+    // get rid of the source
+    sourceLane.notes.splice(sourceNoteIndex, 1);
 
-      // and move it to target
-      targetLane.notes.splice(targetNoteIndex, 0, sourceData);
-    }
+    // and move it to target
+    targetLane.notes.splice(targetNoteIndex, 0, sourceData);
   }
 }
 
