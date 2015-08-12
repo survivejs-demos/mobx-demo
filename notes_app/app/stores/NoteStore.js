@@ -1,58 +1,56 @@
 import uuid from 'node-uuid';
 import {makeReactive} from 'mobservable';
 
-const noteStore = makeReactive({
-  notes: [
-    {
-      id: uuid.v4(),
-      task: 'Learn webpack'
-    },
-    {
-      id: uuid.v4(),
-      task: 'Learn React'
-    },
-    {
-      id: uuid.v4(),
-      task: 'Do laundry'
+class NoteStore {
+  constructor() {
+    this.notes = makeReactive([
+      {
+        id: uuid.v4(),
+        task: 'Learn webpack'
+      },
+      {
+        id: uuid.v4(),
+        task: 'Learn React'
+      },
+      {
+        id: uuid.v4(),
+        task: 'Do laundry'
+      }
+    ])
+  }
+  addNote({task}) {
+    this.notes.push({id: uuid.v4(), task})
+  }
+  editNote(id, task) {
+    const notes = this.notes
+    const noteIndex = this.findNote(id)
+
+    if(noteIndex < 0) {
+      return
     }
-  ]
-});
 
-noteStore.addNote = function({task}) {
-  this.notes.push({id: uuid.v4(), task});
-};
-
-noteStore.editNote = function(id, task) {
-  const notes = this.notes;
-  const noteIndex = this.findNote(id);
-
-  if(noteIndex < 0) {
-    return;
+    this.notes[noteIndex].task = task
   }
+  deleteNote(id) {
+    const notes = this.notes
+    const noteIndex = this.findNote(id)
 
-  this.notes[noteIndex].task = task;
-};
+    if(noteIndex < 0) {
+      return
+    }
 
-noteStore.deleteNote = function(id) {
-  const notes = this.notes;
-  const noteIndex = this.findNote(id);
-
-  if(noteIndex < 0) {
-    return;
+    this.notes.splice(noteIndex, 1)
   }
+  findNote(id) {
+    const notes = this.notes
+    const noteIndex = notes.findIndex((note) => note.id === id)
 
-  this.notes.splice(noteIndex, 1);
-};
+    if(noteIndex < 0) {
+      console.warn('Failed to find note', notes, id)
+    }
 
-noteStore.findNote = function(id) {
-  const notes = this.notes;
-  const noteIndex = notes.findIndex((note) => note.id === id);
-
-  if(noteIndex < 0) {
-    console.warn('Failed to find note', notes, id);
+    return noteIndex
   }
+}
 
-  return noteIndex;
-};
-
-export default noteStore;
+export default new NoteStore()
