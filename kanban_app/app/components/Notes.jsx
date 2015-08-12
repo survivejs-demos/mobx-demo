@@ -1,6 +1,8 @@
 import React from 'react';
 import {reactiveComponent} from 'mobservable';
 import Note from './Note.jsx';
+import Editable from './Editable.jsx';
+import LaneStore from '../stores/LaneStore';
 
 @reactiveComponent
 export default class Notes extends React.Component {
@@ -16,12 +18,13 @@ export default class Notes extends React.Component {
   }
   renderNote(note) {
     return (
-      <li className='note' key={`note${note.id}`}>
-        <Note
-          task={note.task}
+      <Note className='note' onMove={LaneStore.move}
+        data={note} key={`note${note.id}`}>
+        <Editable
+          value={note.task}
           onEdit={this.props.onEdit.bind(null, note.id)}
           onDelete={this.props.onDelete.bind(null, note.id)} />
-      </li>
+      </Note>
     );
   }
 }

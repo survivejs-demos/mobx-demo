@@ -1,24 +1,23 @@
 import React from 'react';
-import Notes from './Notes.jsx';
+import Lanes from './Lanes.jsx';
+import LaneStore from '../stores/LaneStore'
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd/modules/backends/HTML5';
 
-import NoteStore from '../stores/NoteStore'
-
+@DragDropContext(HTML5Backend)
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const store = NoteStore;
+    const store = LaneStore;
 
-    this.addNote = store.addNote.bind(store, {task: 'New task'});
-    this.editNote = store.editNote.bind(store);
-    this.deleteNote = store.deleteNote.bind(store);
+    this.addLane = store.addLane.bind(store, {name: 'New lane'});
   }
   render() {
     return (
       <div>
-        <button onClick={this.addNote}>+</button>
-        <Notes items={NoteStore.notes}
-          onEdit={this.editNote} onDelete={this.deleteNote} />
+        <button onClick={this.addLane}>+</button>
+        <Lanes items={LaneStore.lanes} />
       </div>
     );
   }

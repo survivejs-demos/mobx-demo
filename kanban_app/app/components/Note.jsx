@@ -1,63 +1,42 @@
 import React from 'react';
+import { DragSource, DropTarget } from 'react-dnd';
+import {reactiveComponent} from 'mobservable';
+import ItemTypes from './ItemTypes';
 
-export default class Note extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.finishEdit = this.finishEdit.bind(this);
-    this.checkEnter = this.checkEnter.bind(this);
-    this.edit = this.edit.bind(this);
-    this.renderEdit = this.renderEdit.bind(this);
-    this.renderTask = this.renderTask.bind(this);
-
-    this.state = {
-      editing: false
+const noteSource = {
+  beginDrag(props) {
+    return {
+      data: props.data
     };
   }
-  render() {
-    const editing = this.state.editing;
+};
 
-    return (
-      <div>
-        {editing ? this.renderEdit() : this.renderTask()}
-      </div>
-    );
-  }
-  renderEdit() {
-    return (<input type='text'
-      autoFocus={true}
-      defaultValue={this.props.task}
-      onBlur={this.finishEdit}
-      onKeyPress={this.checkEnter} />);
-  }
-  renderTask() {
-    const onDelete = this.props.onDelete;
+const noteTarget = {
+  hover(targetProps, monitor) {
+    const targetData = targetProps.data || {};
+    const sourceProps = monitor.getItem();
+    const sourceData = sourceProps.data || {};
 
-    return (
-      <div onClick={this.edit}>
-        <span className='task'>{this.props.task}</span>
-        {onDelete ? this.renderDelete() : null}
-      </div>
-    );
-  }
-  renderDelete() {
-    return <button className='delete' onClick={this.props.onDelete}>x</button>;
-  }
-  edit() {
-    this.setState({
-      editing: true
-    });
-  }
-  checkEnter(e) {
-    if(e.key === 'Enter') {
-      this.finishEdit(e);
+    if(sourceData.id !== targetData.id) {
+      targetProps.onMove({sourceData, targetData});
     }
   }
-  finishEdit(e) {
-    this.props.onEdit(e.target.value);
+};
 
-    this.setState({
-      editing: false
-    });
+@reactiveComponent
+@DragSource(ItemTypes.NOTE, noteSource, (connect) => ({
+  connectDragSource: connect.dragSource()
+}))
+@DropTarget(ItemTypes.NOTE, noteTarget, connect => ({
+  connectDropTarget: connect.dropTarget()
+}))
+export default class Note extends React.Component {
+  render() {
+    const {connectDragSource, connectDropTarget,
+      onMove, data, ...props} = this.props;
+
+    return connectDragSource(connectDropTarget(
+      <li {...props}>{props.children}</li>
+    ));
   }
 }
