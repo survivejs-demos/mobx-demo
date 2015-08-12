@@ -10,57 +10,58 @@ import LaneStore from '../stores/LaneStore';
 const noteTarget = {
   hover(targetProps, monitor) {
     const sourceProps = monitor.getItem();
-    const sourceData = sourceProps.data || {};
+    const sourceData = sourceProps.data;
+    const lane = targetProps.lane;
 
-    if(!targetProps.notes.length) {
+    if(!lane.notes.length) {
       LaneStore.attachToLane({
-        laneId: targetProps.id,
-        noteId: sourceData.id
+        lane: lane,
+        note: sourceData
       });
     }
   }
 };
 
-@reactiveComponent
 @DropTarget(ItemTypes.NOTE, noteTarget, connect => ({
   connectDropTarget: connect.dropTarget()
 }))
+@reactiveComponent
 export default class Lane extends React.Component {
   render() {
-    const { connectDropTarget, id, name, notes, ...props } = this.props;
-
+    const { connectDropTarget, lane, ...props } = this.props;
+    const { name, notes } = lane;
     return connectDropTarget(
       <div {...props}>
         <div className='lane-header'>
           <Editable className='lane-name' value={name}
-            onEdit={this.editName.bind(null, id)} />
+            onEdit={this.editName.bind(null, lane)} />
           <div className='lane-add-note'>
-            <button onClick={this.addNote.bind(null, id)}>+</button>
+            <button onClick={this.addNote.bind(null, lane)}>+</button>
           </div>
         </div>
-        <Notes items={NoteStore.get(notes)}
+        <Notes items={notes}
           onEdit={this.editNote}
-          onDelete={this.deleteNote.bind(null, id)} />
+          onDelete={this.deleteNote.bind(null, lane)} />
       </div>
     );
   }
-  addNote(laneId) {
-    const noteId = NoteStore.addNote({task: 'New task'});
-    LaneStore.attachToLane({laneId, noteId});
+  addNote(lane) {
+    const note = NoteStore.addNote({task: 'New task'});
+    LaneStore.attachToLane({lane, note});
   }
-  editNote(noteId, task) {
-    NoteStore.editNote(noteId, task);
+  editNote(note, task) {
+    NoteStore.editNote(note, task);
   }
-  deleteNote(laneId, noteId) {
-    NoteStore.deleteNote(noteId);
-    LaneStore.detachFromLane({laneId, noteId});
+  deleteNote(lane, note) {
+    NoteStore.deleteNote(note);
+    LaneStore.detachFromLane({lane, note});
   }
-  editName(id, name) {
+  editName(lane, name) {
     if(name) {
-      LaneStore.editLane(id, name);
+      LaneStore.editLane(lane, name);
     }
     else {
-      LaneStore.deleteLane(id);
+      LaneStore.deleteLane(lane);
     }
   }
 }

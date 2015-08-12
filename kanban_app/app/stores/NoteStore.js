@@ -20,50 +20,27 @@ class NoteStore {
   }
   addNote({task}) {
     const id = uuid.v4();
+    const note = {id, task};
+    this.notes.push(note);
 
-    this.notes.push({id, task});
-
-    return id;
+    return note;
   }
-  editNote(id, task) {
+  editNote(note, task) {
+    if(!note < 0) {
+      return;
+    }
+
+    note.task = task
+  }
+  deleteNote(note) {
     const notes = this.notes;
-    const noteIndex = this.findNote(id);
+    const noteIndex = notes.indexOf(note);
 
     if(noteIndex < 0) {
       return;
     }
 
-    this.notes[noteIndex].task = task
-  }
-  deleteNote(id) {
-    const notes = this.notes;
-    const noteIndex = this.findNote(id);
-
-    if(noteIndex < 0) {
-      return;
-    }
-
-    this.notes.splice(noteIndex, 1);
-  }
-  findNote(id) {
-    const notes = this.notes;
-    const noteIndex = notes.findIndex((note) => note.id === id);
-
-    if(noteIndex < 0) {
-      console.warn('Failed to find note', notes, id);
-    }
-
-    return noteIndex;
-  }
-  get(ids) {
-    const notes = this.notes;
-    const notesIds = notes.map((note) => note.id);
-
-    if(ids) {
-      return ids.map((id) => notes[notesIds.indexOf(id)]);
-    }
-
-    return [];
+    notes.splice(noteIndex, 1);
   }
 }
 

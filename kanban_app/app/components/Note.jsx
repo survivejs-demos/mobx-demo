@@ -13,9 +13,9 @@ const noteSource = {
 
 const noteTarget = {
   hover(targetProps, monitor) {
-    const targetData = targetProps.data || {};
+    const targetData = targetProps.data;
     const sourceProps = monitor.getItem();
-    const sourceData = sourceProps.data || {};
+    const sourceData = sourceProps.data;
 
     if(sourceData.id !== targetData.id) {
       targetProps.onMove({sourceData, targetData});
@@ -23,13 +23,13 @@ const noteTarget = {
   }
 };
 
-@reactiveComponent
 @DragSource(ItemTypes.NOTE, noteSource, (connect) => ({
   connectDragSource: connect.dragSource()
 }))
 @DropTarget(ItemTypes.NOTE, noteTarget, connect => ({
   connectDropTarget: connect.dropTarget()
 }))
+@reactiveComponent
 export default class Note extends React.Component {
   render() {
     const {connectDragSource, connectDropTarget,

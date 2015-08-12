@@ -1,6 +1,6 @@
 import uuid from 'node-uuid';
 import {makeReactive} from 'mobservable';
-import update from 'react/lib/update';
+import NoteStore from './NoteStore';
 
 class LaneStore {
   constructor() {
@@ -8,153 +8,107 @@ class LaneStore {
       {
         id: uuid.v4(),
         name: 'Todo',
-        notes: []
+        notes: [NoteStore.notes[0], NoteStore.notes[2]]
       },
       {
         id: uuid.v4(),
         name: 'Doing',
-        notes: []
+        notes: [NoteStore.notes[1]]
       },
       {
         id: uuid.v4(),
         name: 'Done',
         notes: []
       }
-    ])
+    ]);
+    this.move = this.move.bind(this);
   }
   addLane({name}) {
     this.lanes.push({id: uuid.v4(), name, notes: []})
   }
-  editLane(id, name) {
+  editLane(lane, name) {
+    lane.name = name;
+  }
+  deleteLane(lane) {
     const lanes = this.lanes;
-    const laneIndex = this.findLane(id);
+    const laneIndex = lanes.indexOf(lane);
 
     if(laneIndex < 0) {
       return;
     }
 
-    this.lanes[laneIndex].name = name;
+    lanes.splice(laneIndex, 1);
   }
-  deleteLane(id) {
+  attachToLane({lane, note}) {
     const lanes = this.lanes;
-    const laneIndex = this.findLane(id);
 
-    if(laneIndex < 0) {
+    if(!lane) {
       return;
     }
 
-    this.lanes.splice(laneIndex, 1);
-  }
-  findLane(id) {
-    const lanes = this.lanes;
-    const laneIndex = lanes.findIndex((lane) => lane.id === id);
-
-    if(laneIndex < 0) {
-      console.warn('Failed to find lane', lanes, id);
-    }
-
-    return laneIndex;
-  }
-  attachToLane({laneId, noteId}) {
-    const lanes = this.lanes;
-    const targetId = this.findLane(laneId);
-
-    if(targetId < 0) {
-      return;
-    }
-
-    this.removeNote(noteId);
-
-    const lane = lanes[targetId];
-
-    if(lane.notes.indexOf(noteId) === -1) {
-      lane.notes.push(noteId);
+    this.removeNote(note);
+    if(lane.notes.indexOf(note) === -1) {
+      lane.notes.push(note);
     }
     else {
       console.warn('Already attached note to lane', lanes);
     }
   }
-  removeNote(noteId) {
+  removeNote(note) {
     const lanes = this.lanes;
     const removeLane = lanes.filter((lane) => {
-      return lane.notes.indexOf(noteId) >= 0;
+      return lane.notes.indexOf(note) >= 0;
     })[0];
 
     if(!removeLane) {
       return;
     }
 
-    const removeNoteId = removeLane.notes.indexOf(noteId);
+    const removeNoteIndex = removeLane.notes.indexOf(note);
 
-    removeLane.notes = removeLane.notes.slice(0, removeNoteId).
-      concat(removeLane.notes.slice(removeNoteId + 1));
+    removeLane.notes.splice(removeNoteIndex, 1);
   }
-  detachFromLane({laneId, noteId}) {
-    const lanes = this.lanes;
-    const targetId = this.findLane(laneId);
-
-    if(targetId < 0) {
-      return;
-    }
-
-    const lane = lanes[targetId];
+  detachFromLane({lane, note}) {
     const notes = lane.notes;
-    const removeId = notes.indexOf(noteId);
+    const removeIndex = notes.indexOf(note);
 
-    if(lane.notes.indexOf(removeId) === -1) {
-      lane.notes = notes.slice(0, removeId).concat(notes.slice(removeId + 1));
+    if(removeIndex !== -1) {
+      lane.notes.splice(removeIndex, 1);
     }
     else {
       console.warn('Failed to remove note from a lane as it didn\'t exist', lanes);
     }
   }
-  findLane(id) {
-    let lanes = this.lanes;
-    const laneIndex = lanes.findIndex((lane) => lane.id === id);
-
-    if(laneIndex < 0) {
-      console.warn('Failed to find lane', lanes, id);
-    }
-
-    return laneIndex;
-  }
   move({sourceData, targetData}) {
     const lanes = this.lanes;
-    const sourceId = sourceData.id;
-    const targetId = targetData.id;
 
     if(!lanes) {
+      debugger;
       // XXXXX: why this can happen?
       return;
     }
 
     const sourceLane = lanes.filter((lane) => {
-      return lane.notes.indexOf(sourceId) >= 0;
+      return lane.notes.indexOf(sourceData) >= 0;
     })[0];
     const targetLane = lanes.filter((lane) => {
-      return lane.notes.indexOf(targetId) >= 0;
+      return lane.notes.indexOf(targetData) >= 0;
     })[0];
-    const sourceNoteId = sourceLane.notes.indexOf(sourceId);
-    const targetNoteId = targetLane.notes.indexOf(targetId);
+    const sourceNoteIndex = sourceLane.notes.indexOf(sourceData);
+    const targetNoteIndex = targetLane.notes.indexOf(targetData);
 
     if(sourceLane === targetLane) {
       // move at once to avoid complications
-      sourceLane.notes = update(sourceLane.notes, {
-        $splice: [
-          [sourceNoteId, 1],
-          [targetNoteId, 0, sourceId]
-        ]
-      });
+      sourceLane.notes.splice(sourceNoteIndex, 1);
+      sourceLane.notes.splice(targetNoteIndex, 0, sourceData);
     }
     else {
       // get rid of the source
-      sourceLane.notes.splice(sourceNoteId, 1);
+      sourceLane.notes.splice(sourceNoteIndex, 1);
 
       // and move it to target
-      targetLane.notes.splice(targetNoteId, 0, sourceId);
+      targetLane.notes.splice(targetNoteIndex, 0, sourceData);
     }
-
-    this.setState({lanes});
   }
 }
 
