@@ -32,6 +32,13 @@ if(TARGET === 'start') {
   module.exports = merge(common, {
     devtool: 'eval',
     module: {
+      preLoaders: [
+        {
+          test: /\.jsx?$/,
+          loader: 'eslint-loader',
+          include: path.resolve(ROOT_PATH, 'app')
+        }
+      ],
       loaders: [
         {
           test: /\.jsx?$/,
