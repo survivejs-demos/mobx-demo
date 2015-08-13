@@ -40,7 +40,7 @@ export default class Lane extends React.Component {
           </div>
         </div>
         <Notes items={notes}
-          onEdit={this.editNote}
+          onEdit={NoteStore.editNote}
           onDelete={this.deleteNote.bind(null, lane)} />
       </div>
     );
@@ -48,9 +48,6 @@ export default class Lane extends React.Component {
   addNote(lane) {
     const note = NoteStore.addNote({task: 'New task'});
     LaneStore.attachToLane({lane, note});
-  }
-  editNote(note, task) {
-    NoteStore.editNote(note, task);
   }
   deleteNote(lane, note) {
     NoteStore.deleteNote(note);
