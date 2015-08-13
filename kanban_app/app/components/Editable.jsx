@@ -1,7 +1,5 @@
 import React from 'react';
-import {reactiveComponent} from 'mobservable';
 
-@reactiveComponent
 export default class Editable extends React.Component {
   constructor(props) {
     super(props);
