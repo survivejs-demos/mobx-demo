@@ -19,8 +19,8 @@ class NoteStore {
     ]);
   }
   addNote({task}) {
-    const id = uuid.v4();
-    const note = {id, task};
+    const note = {id: uuid.v4(), task};
+
     this.notes.push(note);
 
     return note;
