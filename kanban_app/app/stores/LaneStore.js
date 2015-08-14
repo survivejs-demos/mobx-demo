@@ -28,8 +28,7 @@ class LaneStore {
     }
 
     this.toJson = makeReactive(() => {
-      console.log('Serializing LaneStore');
-      // MWE: if lane where classes, they could all have their own toJson, which would be slighlty nicer..
+      // the representation of all the lanes in storage format
       return this.lanes.map(lane => ({
         ...lane,
         notes: lane.notes.map(note => note.id)
@@ -121,13 +120,8 @@ class LaneStore {
     }));
   }
   persist() {
-    // MWE: This sideEffect triggers on each time 'toJson' changes (which has been declared reactively)
+    // Whenever the Json representation of the lanes changes, store it.
     sideEffect(() => {
-      console.log('storing lanestore');
-      // MWE: it woud be nicer to create a sideEffect per lane; in that case individual changed lanes are stored instead of all of them
-      // MWE: at once, which would be more realistic when talking to a back-end
-      // MWE: the toJSon method could also be inlined here, but separating the view generation and the side effect might trigger the right
-      // MWE: mindset
       storage.set('LaneStore', this.toJson());
     });
   }

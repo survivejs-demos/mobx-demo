@@ -1,5 +1,5 @@
 import uuid from 'node-uuid';
-import mobservable, {makeReactive, sideEffect} from 'mobservable';
+import {makeReactive, sideEffect} from 'mobservable';
 import storage from '../libs/storage';
 
 class NoteStore {
@@ -21,10 +21,9 @@ class NoteStore {
         }
       );
     }
-    // MWE: the json representation for storage, just another view on this store..
+    // The storage representation of the notes collection.
     this.toJson = makeReactive(() => {
-      console.log('Serializing NoteStore');
-      return mobservable.toJson(this.notes);
+      return this.notes.slice();
     });
     this.persist();
   }
@@ -65,8 +64,8 @@ class NoteStore {
     return storage.get('NoteStore') || [];
   }
   persist() {
+    // Whenever the Json representation of the notes changes, store them.
     sideEffect(() => {
-      console.log('storing notes');
       storage.set('NoteStore', this.toJson());
     });
   }
