@@ -52,6 +52,7 @@ class LaneStore {
       return;
     }
 
+    lane.notes.forEach(note => NoteStore.deleteNote(note));
     lanes.splice(laneIndex, 1);
   }
   attachToLane({lane, note}) {
