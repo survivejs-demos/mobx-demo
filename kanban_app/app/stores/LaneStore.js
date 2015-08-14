@@ -1,27 +1,42 @@
 import uuid from 'node-uuid';
-import {makeReactive} from 'mobservable';
+import {makeReactive, sideEffect} from 'mobservable';
 import NoteStore from './NoteStore';
+import storage from '../libs/storage';
 
 class LaneStore {
   constructor() {
-    this.lanes = makeReactive([
-      {
-        id: uuid.v4(),
-        name: 'Todo',
-        notes: [NoteStore.notes[0], NoteStore.notes[2]]
-      },
-      {
-        id: uuid.v4(),
-        name: 'Doing',
-        notes: [NoteStore.notes[1]]
-      },
-      {
-        id: uuid.v4(),
-        name: 'Done',
-        notes: []
-      }
-    ]);
+    this.lanes = makeReactive(this.load());
+    // create some defaults for demo purposes...
+    if (!this.lanes.length && NoteStore.notes.length >= 3) {
+      this.lanes.push(
+        {
+          id: uuid.v4(),
+          name: 'Todo',
+          notes: [NoteStore.notes[0], NoteStore.notes[2]]
+        },
+        {
+          id: uuid.v4(),
+          name: 'Doing',
+          notes: [NoteStore.notes[1]]
+        },
+        {
+          id: uuid.v4(),
+          name: 'Done',
+          notes: []
+        }
+      );
+    }
+
+    this.toJson = makeReactive(() => {
+      // the representation of all the lanes in storage format
+      return this.lanes.map(lane => ({
+        ...lane,
+        notes: lane.notes.map(note => note.id)
+      }));
+    });
+
     this.move = this.move.bind(this);
+    this.persist();
   }
   addLane({name}) {
     this.lanes.push({id: uuid.v4(), name, notes: []})
@@ -96,6 +111,19 @@ class LaneStore {
 
     // and move it to target
     targetLane.notes.splice(targetNoteIndex, 0, sourceData);
+  }
+  load() {
+    const rawLanes = storage.get('LaneStore') || [];
+    return rawLanes.map(lane => ({
+      ...lane,
+      notes: lane.notes.map(id => NoteStore.find(id))
+    }));
+  }
+  persist() {
+    // Whenever the Json representation of the lanes changes, store it.
+    sideEffect(() => {
+      storage.set('LaneStore', this.toJson());
+    });
   }
 }
 
