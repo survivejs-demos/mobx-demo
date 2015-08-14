@@ -1,22 +1,32 @@
 import uuid from 'node-uuid';
-import {makeReactive} from 'mobservable';
+import mobservable, {makeReactive, sideEffect} from 'mobservable';
+import storage from '../libs/storage';
 
 class NoteStore {
   constructor() {
-    this.notes = makeReactive([
-      {
-        id: uuid.v4(),
-        task: 'Learn webpack'
-      },
-      {
-        id: uuid.v4(),
-        task: 'Learn React'
-      },
-      {
-        id: uuid.v4(),
-        task: 'Do laundry'
-      }
-    ]);
+    this.notes = makeReactive(this.load());
+    if (!this.notes.length) {
+      this.notes.push(
+        {
+          id: uuid.v4(),
+          task: 'Learn webpack'
+        },
+        {
+          id: uuid.v4(),
+          task: 'Learn React'
+        },
+        {
+          id: uuid.v4(),
+          task: 'Do laundry'
+        }
+      );
+    }
+    // MWE: the json representation for storage, just another view on this store..
+    this.toJson = makeReactive(() => {
+      console.log('Serializing NoteStore');
+      return mobservable.toJson(this.notes);
+    });
+    this.persist();
   }
   addNote({task}) {
     const note = {id: uuid.v4(), task};
@@ -41,6 +51,24 @@ class NoteStore {
     }
 
     notes.splice(noteIndex, 1);
+  }
+  find(id) {
+    const note = this.notes.find(note => note.id === id); // find is es7 'polyfill' provided by reactive arrays
+
+    if (!note) {
+      console.warn('Failed to find note: ' + id);
+    }
+
+    return note;
+  }
+  load() {
+    return storage.get('NoteStore') || [];
+  }
+  persist() {
+    sideEffect(() => {
+      console.log('storing notes');
+      storage.set('NoteStore', this.toJson());
+    });
   }
 }
 
