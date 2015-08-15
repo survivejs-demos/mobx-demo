@@ -28,11 +28,10 @@ class NoteStore {
     this.persist();
   }
   addNote({task}) {
-    const note = {id: uuid.v4(), task};
+    const notes = this.notes;
 
-    this.notes.push(note);
-
-    return note;
+    notes.push({id: uuid.v4(), task});
+    return notes[notes.length - 1];
   }
   editNote(note, task) {
     if(!note < 0) {
