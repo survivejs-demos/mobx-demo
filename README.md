@@ -1,6 +1,6 @@
 # Notes/Kanban app - mobservable port
 
-This repository contains [mobservable](https://mweststrate.github.io/mobservable/) ports of [SurviveJS - Webpack and React](http://survivejs.com/) book examples. You can study them to see how to implement the same application in a different kind of architecture.
+This repository contains [mobservable](https://mweststrate.github.io/mobservable/) ports of [SurviveJS - Webpack and React](http://survivejs.com/) book examples. You can study them to see how to implement the same application in a different kind of architecture. See also [the interview with Michel Weststrate](http://survivejs.com/blog/mobservable-interview/).
 
 Mobservable provides a way to make data structures reactive and makes it easy to consume them. It can be used with or without Flux. In this case we'll be relying directly on mobservable for our data needs and skip Flux altogether. The most interesting thing to notice is how much it cuts out code.
 
