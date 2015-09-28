@@ -9,9 +9,9 @@ We are triggering our mobservable stores directly and more pedantic people might
 ## Demo
 
 1. `cd notes_app` or `cd kanban_app`
-1. `npm i`
-2. `npm start`
-3. Surf to `localhost:8080`
+2. `npm i`
+3. `npm start`
+4. Surf to `localhost:8080`
 
 ## License
 
