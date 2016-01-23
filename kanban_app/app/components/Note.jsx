@@ -1,6 +1,6 @@
 import React from 'react';
-import { DragSource, DropTarget } from 'react-dnd';
-import {reactiveComponent} from 'mobservable';
+import {observer} from 'mobservable-react';
+import {DragSource, DropTarget} from 'react-dnd';
 import ItemTypes from './ItemTypes';
 
 const noteSource = {
@@ -8,6 +8,9 @@ const noteSource = {
     return {
       data: props.data
     };
+  },
+  isDragging(props, monitor) {
+    return props.data === monitor.getItem().data;
   }
 };
 
@@ -23,20 +26,23 @@ const noteTarget = {
   }
 };
 
-@DragSource(ItemTypes.NOTE, noteSource, (connect) => ({
-  connectDragSource: connect.dragSource()
+@DragSource(ItemTypes.NOTE, noteSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
 }))
 @DropTarget(ItemTypes.NOTE, noteTarget, connect => ({
   connectDropTarget: connect.dropTarget()
 }))
-@reactiveComponent
+@observer
 export default class Note extends React.Component {
   render() {
-    const {connectDragSource, connectDropTarget,
+    const {connectDragSource, connectDropTarget, isDragging,
       onMove, data, ...props} = this.props;
 
     return connectDragSource(connectDropTarget(
-      <li {...props}>{props.children}</li>
+      <li style={{
+        opacity: isDragging ? 0 : 1
+      }} {...props}>{props.children}</li>
     ));
   }
 }

@@ -1,10 +1,10 @@
 import uuid from 'node-uuid';
-import {makeReactive, sideEffect} from 'mobservable';
+import {observable, autorun} from 'mobservable';
 import storage from '../libs/storage';
 
 class NoteStore {
   constructor() {
-    this.notes = makeReactive(this.load());
+    this.notes = observable(this.load());
     if (!this.notes.length) {
       this.notes.push(
         {
@@ -22,7 +22,7 @@ class NoteStore {
       );
     }
     // The storage representation of the notes collection.
-    this.toJson = makeReactive(() => {
+    this.toJson = observable(() => {
       return this.notes.slice();
     });
     this.persist();
@@ -64,7 +64,7 @@ class NoteStore {
   }
   persist() {
     // Whenever the Json representation of the notes changes, store them.
-    sideEffect(() => {
+    autorun(() => {
       storage.set('NoteStore', this.toJson());
     });
   }

@@ -1,8 +1,8 @@
 import React from 'react';
 import Notes from './Notes.jsx';
 import Editable from './Editable.jsx';
-import { DropTarget } from 'react-dnd';
-import {reactiveComponent} from 'mobservable';
+import {observer} from 'mobservable-react';
+import {DropTarget} from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import NoteStore from '../stores/NoteStore';
 import LaneStore from '../stores/LaneStore';
@@ -25,11 +25,12 @@ const noteTarget = {
 @DropTarget(ItemTypes.NOTE, noteTarget, connect => ({
   connectDropTarget: connect.dropTarget()
 }))
-@reactiveComponent
+@observer
 export default class Lane extends React.Component {
   render() {
-    const { connectDropTarget, lane, ...props } = this.props;
-    const { name, notes } = lane;
+    const {connectDropTarget, lane, ...props} = this.props;
+    const {name, notes} = lane;
+
     return connectDropTarget(
       <div {...props}>
         <div className='lane-header'>

@@ -1,8 +1,8 @@
 import React from 'react';
-import {reactiveComponent} from 'mobservable';
+import {observer} from 'mobservable-react';
 import Lane from './Lane.jsx';
 
-@reactiveComponent
+@observer
 export default class Lanes extends React.Component {
   render() {
     const lanes = this.props.items;

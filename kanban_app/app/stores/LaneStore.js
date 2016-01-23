@@ -1,11 +1,11 @@
 import uuid from 'node-uuid';
-import {makeReactive, sideEffect} from 'mobservable';
+import {observable, autorun} from 'mobservable';
 import NoteStore from './NoteStore';
 import storage from '../libs/storage';
 
 class LaneStore {
   constructor() {
-    this.lanes = makeReactive(this.load());
+    this.lanes = observable(this.load());
     // create some defaults for demo purposes...
     if (!this.lanes.length && NoteStore.notes.length >= 3) {
       this.lanes.push(
@@ -27,7 +27,7 @@ class LaneStore {
       );
     }
 
-    this.toJson = makeReactive(() => {
+    this.toJson = observable(() => {
       // the representation of all the lanes in storage format
       return this.lanes.map(lane => ({
         ...lane,
@@ -122,7 +122,7 @@ class LaneStore {
   }
   persist() {
     // Whenever the Json representation of the lanes changes, store it.
-    sideEffect(() => {
+    autorun(() => {
       storage.set('LaneStore', this.toJson());
     });
   }

@@ -1,10 +1,10 @@
 import React from 'react';
-import {reactiveComponent} from 'mobservable';
+import {observer} from 'mobservable-react';
 import Note from './Note.jsx';
 import Editable from './Editable.jsx';
 import LaneStore from '../stores/LaneStore';
 
-@reactiveComponent
+@observer
 export default class Notes extends React.Component {
   constructor(props) {
     super(props);
