@@ -1,9 +1,9 @@
 import uuid from 'node-uuid';
-import {makeReactive} from 'mobservable';
+import {observable} from 'mobservable';
 
 class NoteStore {
   constructor() {
-    this.notes = makeReactive([
+    this.notes = observable([
       {
         id: uuid.v4(),
         task: 'Learn webpack'
@@ -19,7 +19,10 @@ class NoteStore {
     ]);
   }
   addNote({task}) {
-    this.notes.push({id: uuid.v4(), task});
+    this.notes.push({
+      id: uuid.v4(),
+      task
+    });
   }
   editNote(note, task) {
     if(!note < 0) {
