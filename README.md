@@ -6,6 +6,8 @@ Mobservable provides a way to make data structures reactive and makes it easy to
 
 We are triggering our mobservable stores directly and more pedantic people might implement classes in between. For a simple case such as this the current approach is enough.
 
+> See [Michel Weststrate's interview about mobservable](http://survivejs.com/blog/mobservable-interview/)!
+
 ## Demo
 
 1. `cd notes_app` or `cd kanban_app`
