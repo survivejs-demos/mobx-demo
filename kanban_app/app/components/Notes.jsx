@@ -1,5 +1,5 @@
 import React from 'react';
-import {observer} from 'mobservable-react';
+import {observer} from 'mobx-react';
 import Note from './Note.jsx';
 import Editable from './Editable.jsx';
 import LaneStore from '../stores/LaneStore';

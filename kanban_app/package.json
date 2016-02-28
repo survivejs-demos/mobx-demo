@@ -31,8 +31,8 @@
     "webpack-merge": "^0.7.3"
   },
   "dependencies": {
-    "mobservable": "^1.2.2",
-    "mobservable-react": "^2.1.1",
+    "mobx": "^2.0.0",
+    "mobx-react": "^3.0.0",
     "node-uuid": "^1.4.7",
     "react": "^0.14.6",
     "react-dnd": "^2.0.2",

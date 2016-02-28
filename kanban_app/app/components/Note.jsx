@@ -1,5 +1,5 @@
 import React from 'react';
-import {observer} from 'mobservable-react';
+import {observer} from 'mobx-react';
 import {DragSource, DropTarget} from 'react-dnd';
 import ItemTypes from './ItemTypes';
 

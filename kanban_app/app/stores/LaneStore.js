@@ -1,12 +1,22 @@
 import uuid from 'node-uuid';
-import {observable, autorun} from 'mobservable';
+import {extendObservable, computed, autorun} from 'mobx';
 import NoteStore from './NoteStore';
 import storage from '../libs/storage';
 
 class LaneStore {
+  @computed get toJson() {
+    // The representation of all the lanes in storage format
+    return this.lanes.map(lane => ({
+      ...lane,
+      notes: lane.notes.map(note => note.id)
+    }));
+  }
   constructor() {
-    this.lanes = observable(this.load());
-    // create some defaults for demo purposes...
+    extendObservable(this, {
+      lanes: this.load()
+    });
+
+    // Create some defaults for demo purposes...
     if (!this.lanes.length && NoteStore.notes.length >= 3) {
       this.lanes.push(
         {
@@ -27,15 +37,6 @@ class LaneStore {
       );
     }
 
-    this.toJson = observable(() => {
-      // the representation of all the lanes in storage format
-      return this.lanes.map(lane => ({
-        ...lane,
-        notes: lane.notes.map(note => note.id)
-      }));
-    });
-
-    this.move = this.move.bind(this);
     this.persist();
   }
   addLane({name}) {
@@ -95,7 +96,7 @@ class LaneStore {
       console.warn('Failed to remove note from a lane as it didn\'t exist', lanes);
     }
   }
-  move({sourceData, targetData}) {
+  move = ({sourceData, targetData}) => {
     const lanes = this.lanes;
 
     const sourceLane = lanes.filter((lane) => {
@@ -112,9 +113,10 @@ class LaneStore {
 
     // and move it to target
     targetLane.notes.splice(targetNoteIndex, 0, sourceData);
-  }
+  };
   load() {
     const rawLanes = storage.get('LaneStore') || [];
+
     return rawLanes.map(lane => ({
       ...lane,
       notes: lane.notes.map(id => NoteStore.find(id))
@@ -123,7 +125,7 @@ class LaneStore {
   persist() {
     // Whenever the Json representation of the lanes changes, store it.
     autorun(() => {
-      storage.set('LaneStore', this.toJson());
+      storage.set('LaneStore', this.toJson);
     });
   }
 }

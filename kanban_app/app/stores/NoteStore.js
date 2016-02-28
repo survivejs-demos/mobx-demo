@@ -1,10 +1,18 @@
 import uuid from 'node-uuid';
-import {observable, autorun} from 'mobservable';
+import {extendObservable, computed, autorun} from 'mobx';
 import storage from '../libs/storage';
 
 class NoteStore {
+  @computed get toJson() {
+    // The storage representation of the notes collection.
+    return this.notes.slice();
+  }
   constructor() {
-    this.notes = observable(this.load());
+    extendObservable(this, {
+      notes: this.load()
+    });
+
+    // Create some defaults for demo purposes...
     if (!this.notes.length) {
       this.notes.push(
         {
@@ -21,10 +29,7 @@ class NoteStore {
         }
       );
     }
-    // The storage representation of the notes collection.
-    this.toJson = observable(() => {
-      return this.notes.slice();
-    });
+
     this.persist();
   }
   addNote({task}) {
@@ -65,7 +70,7 @@ class NoteStore {
   persist() {
     // Whenever the Json representation of the notes changes, store them.
     autorun(() => {
-      storage.set('NoteStore', this.toJson());
+      storage.set('NoteStore', this.toJson);
     });
   }
 }
