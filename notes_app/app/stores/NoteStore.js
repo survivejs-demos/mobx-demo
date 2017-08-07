@@ -1,5 +1,5 @@
-import uuid from 'node-uuid';
-import {observable} from 'mobx';
+import uuid from 'uuid';
+import { observable } from 'mobx';
 
 class NoteStore {
   constructor() {

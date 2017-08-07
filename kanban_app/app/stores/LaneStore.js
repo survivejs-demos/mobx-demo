@@ -1,5 +1,5 @@
-import uuid from 'node-uuid';
-import {extendObservable, computed, autorun} from 'mobx';
+import uuid from 'uuid';
+import { extendObservable, computed, autorun } from 'mobx';
 import NoteStore from './NoteStore';
 import storage from '../libs/storage';
 
