@@ -4,7 +4,7 @@
   "description": "MobX Notes demo",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --env develop",
+    "start": "webpack-dev-server --env development",
     "build": "webpack --env production"
   },
   "keywords": [

@@ -48,7 +48,6 @@ const developmentConfig = {
     historyApiFallback: true,
     hot: true,
     inline: true,
-    progress: true,
 
     // display only errors to reduce the amount of output
     stats: 'errors-only',
